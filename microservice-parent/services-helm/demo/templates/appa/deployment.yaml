@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "demo.fullname" . }}-appa
+  labels:
+    {{- include "demo.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.appa.autoscaling.enabled }}
+  replicas: {{ .Values.appa.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "demo.selectorLabels" . | nindent 6 }}
+      app: app-a
+  template:
+    metadata:
+      {{- with .Values.appa.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "demo.selectorLabels" . | nindent 8 }}
+        app: app-a
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "demo.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.appa.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.appa.securityContext | nindent 12 }}
+          image: "{{ .Values.appa.image.repository }}:{{ .Values.appa.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.appa.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+          env:
+            - name: SPRING_CONFIG_NAME
+              value: "k8s"
+          resources:
+            {{- toYaml .Values.appa.resources | nindent 12 }}
+      {{- with .Values.appa.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.appa.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.appa.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

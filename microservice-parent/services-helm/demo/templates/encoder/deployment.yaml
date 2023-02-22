@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "demo.fullname" . }}-encoder
+  labels:
+    {{- include "demo.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.encoder.autoscaling.enabled }}
+  replicas: {{ .Values.encoder.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "demo.selectorLabels" . | nindent 6 }}
+      app: encoder
+  template:
+    metadata:
+      {{- with .Values.encoder.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "demo.selectorLabels" . | nindent 8 }}
+        app: encoder
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "demo.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.encoder.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.encoder.securityContext | nindent 12 }}
+          image: "{{ .Values.encoder.image.repository }}:{{ .Values.encoder.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.encoder.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+          resources:
+            {{- toYaml .Values.encoder.resources | nindent 12 }}
+      {{- with .Values.encoder.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.encoder.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.encoder.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -2,6 +2,7 @@ package com.example.encoder.dto;
 
 import lombok.*;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
