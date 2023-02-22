@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: encoder-deployment
+  labels:
+    app: encoder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: encoder
+  template:
+    metadata:
+      labels:
+        app: encoder
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-auth
+      containers:
+        - name: encoder
+          image: boroserik/private:encoderv2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081

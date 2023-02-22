@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-a
+spec:
+  containers:
+    - name: app-a
+      image: boroserik/private:app-a
+      ports:
+        - containerPort: 8080
+  imagePullSecrets:
+    - name: dockerhub-auth
+# minikube kubectl -- apply -f .\appA\deployment\test\appA-pod.yml
+# minikube kubectl -- create secret generic regcred --from-file=.dockerconfigjson=.\config.json --type=kubernetes.io/dockerconfigjson
