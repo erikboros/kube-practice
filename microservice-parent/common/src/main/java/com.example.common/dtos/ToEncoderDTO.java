@@ -1,8 +1,7 @@
-package com.example.encoder.dto;
+package com.example.common.dtos;
 
 import lombok.*;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
