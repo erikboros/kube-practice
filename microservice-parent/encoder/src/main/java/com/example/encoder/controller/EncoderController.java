@@ -1,8 +1,8 @@
 package com.example.encoder.controller;
 
+import com.example.common.dtos.FromEncoderDTO;
+import com.example.common.dtos.ToEncoderDTO;
 import com.example.encoder.EncoderApplication;
-import com.example.encoder.dto.FromEncodeDTO;
-import com.example.encoder.dto.ToEncoderDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLOutput;
@@ -13,11 +13,11 @@ import java.util.Base64;
 public class EncoderController {
 
     @PostMapping(path = "/encode", produces = "application/json")
-    public @ResponseBody FromEncodeDTO postEncode(@RequestBody ToEncoderDTO request) {
+    public @ResponseBody FromEncoderDTO postEncode(@RequestBody ToEncoderDTO request) {
 
         System.out.println("incoming request: " + request.toString());
 
-        return FromEncodeDTO.builder()
+        return FromEncoderDTO.builder()
                 .encoded(Base64.getEncoder().encodeToString(request.getBaseText().getBytes()))
                 .encoderCounter(EncoderApplication.counter++)
                 .build();

@@ -2,9 +2,9 @@ package com.example.appA.controller;
 
 import com.example.appA.AppAApplication;
 import com.example.appA.dto.EncoderResponseDTO;
-import com.example.appA.dto.FromEncoderDTO;
 import com.example.appA.dto.HelloDTO;
 import com.example.appA.service.EncoderConnector;
+import com.example.common.dtos.FromEncoderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

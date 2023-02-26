@@ -11,6 +11,7 @@
   <modules>
     <module>appA</module>
     <module>encoder</module>
+    <module>common</module>
   </modules>
 
   <name>microservice-parent</name>
